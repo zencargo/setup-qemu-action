@@ -28,7 +28,16 @@ actionsToolkit.run(
     });
 
     await core.group(`Installing QEMU static binaries`, async () => {
-      await Exec.exec('docker', ['run', '--rm', '--privileged', input.image, '--install', input.platforms]);
+      await Exec.exec('docker', [
+        'run',
+        '--userns',
+        'host',
+        '--rm',
+        '--privileged',
+        input.image,
+        '--install',
+        input.platforms
+      ]);
     });
 
     await core.group(`Extracting available platforms`, async () => {
