@@ -29,12 +29,21 @@ async function run(): Promise<void> {
     });
 
     await core.group(`Installing QEMU static binaries`, async () => {
-      await exec.exec('docker', ['run', '--rm', '--privileged', input.image, '--install', input.platforms]);
+      await exec.exec('docker', [
+        'run',
+        '--userns',
+        'host',
+        '--rm',
+        '--privileged',
+        input.image,
+        '--install',
+        input.platforms
+      ]);
     });
 
     await core.group(`Extracting available platforms`, async () => {
       await exec
-        .getExecOutput('docker', ['run', '--rm', '--privileged', input.image], {
+        .getExecOutput('docker', ['run', '--userns', 'host', '--rm', '--privileged', input.image], {
           ignoreReturnCode: true,
           silent: true
         })
